@@ -85,7 +85,6 @@ ORDER BY 2, 3
 
 -- 
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(cast(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS RollingPeopleVaccinated
---, (RollingPeopleVaccinated/population)*100
 FROM PortfolioProject..CovidDeaths dea
 JOIN PortfolioProject..CovidVaccinations vac
 	ON dea.location = vac.location
@@ -99,13 +98,11 @@ WITH PopvsVac (continent, location, date, population, new_vaccinations, RollingP
 AS
 (
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(cast(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS RollingPeopleVaccinated
---, (RollingPeopleVaccinated/population)*100
 FROM PortfolioProject..CovidDeaths dea
 JOIN PortfolioProject..CovidVaccinations vac
 	ON dea.location = vac.location
 	AND dea.date = vac.date
 WHERE dea.continent is not null
--- ORDER BY 2, 3
 )
 SELECT *, (RollingPeopleVaccinated/population)*100 AS RollingPopulationVaccinated
 FROM PopvsVac
